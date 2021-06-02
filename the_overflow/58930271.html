@@ -1,0 +1,125 @@
+
+    <div class="responsive">
+      <div class="modal fade" id="myModal2" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Shout Box!</h4>
+            </div>
+            <div class="modal-body">
+              <!-- Form -->
+              <form class="text-center" style="color: #757575;" id="shoutOutForm" name="shoutOutForm"
+                action="shouts.php" method="POST">
+                <!-- Form Start -->
+                <section class="forms">
+                  <div class="container-fluid">
+                    <!-- Page Header-->
+                    <div id="buttonAlert"></div>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="card-body">
+                          <?php
+                            $user_id = $wo["user"]["id"];
+                          ?>
+
+                            <input type="text" id="sigaw" name="sigaw" value="">
+                            <input type="hidden" id="username" name="username" value="<?= $user_id ?>">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+            </div><!-- End Modal Body -->
+            <!-- Form End -->
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="submit" class="btn btn btn-success" id="shoutOutBtn" data-loading-text="Shouting..."> <i class="fa fa-check"></i> Shout</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-power-off"></i> Close</button>
+            </div>
+              <!-- possible cause of undesired error, not OP comment! -->
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+      $(document).ready(function(){
+        // submit customers form function
+        $("#shoutOutForm").unbind('submit').bind('submit', function() {
+          $('.form-group').removeClass('has-error').removeClass('has-success');
+          $('.text-danger').remove();
+          var sigaw = $("#sigaw").val();
+          var username = $("#username").val();
+          if(sigaw == "") {
+            $("#sigaw").after('<p class="text-danger">Shout Out field is required</p>');
+            $('#sigaw').closest('.form-group').addClass('has-error');
+          } else {
+            // remov error text field
+            $("#sigaw").find('.text-danger').remove();
+            // success out for form
+            $("#sigaw").closest('.form-group').addClass('has-success');
+          }
+          if(sigaw) {
+              var form = $(this);
+              // button loading
+              $("#shoutOutBtn").button('loading');
+              $.ajax({
+                url : form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                dataType: 'json',
+                beforeSend: function() {
+                  $('#shoutOutBtn').html("<div class='spinner-border text-light' role='status'></div> Shouting ...");
+                  $("#shoutOutBtn").prop('disabled', true); // disable button
+                },
+                  success:function(response) {
+                    // button loading
+                    $("#shoutOutBtn").button('reset');
+                      if(response.success == true) {
+                        // reload the manage member table
+                        // reset the form text
+                        $("#shoutOutForm")[0].reset();
+                        // remove the error text
+                        $(".text-danger").remove();
+                        // remove the form error
+                        $('.form-group').removeClass('has-error').removeClass('has-success');
+                        $('#buttonAlert').html('<div class="alert alert-success">'+
+                          '<button type="button" class="close" data-dismiss="alert">&times;</button>'+
+                          '<strong><i class="fa fa-check"></i></strong> '+ response.messages +
+                          '</div>');
+                        $(".alert-success").delay(500).show(10, function() {
+                          $(this).delay(3000).hide(10, function() {
+                            $(this).remove();
+                            $("#shoutOutBtn").prop('disabled', false); // disable button
+                            $('#shoutOutBtn').html("<i class=\"fa fa-check\"></i> Save");
+                          });
+                        }); // /.alert
+                      } else {
+                        $("#shoutOutForm")[0].reset();
+                        // remove the error text
+                        $(".text-danger").remove();
+                        // remove the form error
+                        $('.form-group').removeClass('has-error').removeClass('has-success');
+
+                        $('#buttonAlert').html('<div class="alert alert-danger">'+
+                          '<button type="button" class="close" data-dismiss="alert">&times;</button>'+
+                          '<strong><i class="fa fa-check"></i></strong> '+ response.messages +
+                          '</div>');
+                        $(".alert-danger").delay(500).show(10, function() {
+                          $(this).delay(3000).hide(10, function() {
+                            $(this).remove();
+                            $("#shoutOutBtn").prop('disabled', false); // disable button
+                            $('#shoutOutBtn').html("<i class=\"fa fa-cross\"></i> Save");
+                          });
+                        }); // /.alert
+                      }
+                  } // /success
+              }); // /ajax
+          } // if
+          return false;
+        });  // submit customers form function
+      });
+    </script>

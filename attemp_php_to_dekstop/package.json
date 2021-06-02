@@ -1,0 +1,14 @@
+{
+  "name": "php_to_dekstop",
+  "version": "0.0.0",
+  "description": "bussines marketing automator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Adi Prasetyo, Topan",
+  "license": "ISC",
+  "devDependencies": {
+    "nativefier": "^7.6.9"
+  }
+}
